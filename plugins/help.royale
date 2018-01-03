@@ -185,9 +185,10 @@ function help:on_callback_query(callback_query, message, configuration)
     <b>Hi %s! My name's %s, it's a pleasure to meet you</b> %s
     I will connect ClashRoyale with Telegram in an easy way saving time!
 
-    I'm the best friend of @BarrePolice_Bot! He will help you to manage groups
-
     %s <b>Find me useful, or just want to help?</b> Donations are very much appreciated, send to @BarrePolice_Bot the /donate command!
+
+    I'm the best friend of @BarrePolice_Bot! He will help you to manage groups
+    If you have any question, ask my creator: @Barreeeiroo
             ]],
                 mattata.escape_html(callback_query.from.first_name),
                 mattata.escape_html(self.info.first_name),
@@ -209,12 +210,12 @@ function help:on_message(message, configuration, language)
         string.format(
         [[
 <b>Hi %s! My name's %s, it's a pleasure to meet you</b> %s
-
 I will connect ClashRoyale with Telegram in an easy way saving time!
 
-I'm the best friend of @BarrePolice_Bot! He will help you to manage groups
-
 %s <b>Find me useful, or just want to help?</b> Donations are very much appreciated, send to @BarrePolice_Bot the /donate command!
+
+I'm the best friend of @BarrePolice_Bot! He will help you to manage groups
+If you have any question, ask my creator: @Barreeeiroo
         ]],
             mattata.escape_html(message.from.first_name),
             mattata.escape_html(self.info.first_name),
