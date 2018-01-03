@@ -187,7 +187,7 @@ function help:on_callback_query(callback_query, message, configuration)
 
     I'm the best friend of @BarrePolice_Bot! He will help you to manage groups
 
-    %s <b>Find me useful, or just want to help?</b> Donations are very much appreciated, use /donate for more information!
+    %s <b>Find me useful, or just want to help?</b> Donations are very much appreciated, send to @BarrePolice_Bot the /donate command!
             ]],
                 mattata.escape_html(callback_query.from.first_name),
                 mattata.escape_html(self.info.first_name),
@@ -214,7 +214,7 @@ I will connect ClashRoyale with Telegram in an easy way saving time!
 
 I'm the best friend of @BarrePolice_Bot! He will help you to manage groups
 
-%s <b>Find me useful, or just want to help?</b> Donations are very much appreciated, use /donate for more information!
+%s <b>Find me useful, or just want to help?</b> Donations are very much appreciated, send to @BarrePolice_Bot the /donate command!
         ]],
             mattata.escape_html(message.from.first_name),
             mattata.escape_html(self.info.first_name),
