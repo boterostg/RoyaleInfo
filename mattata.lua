@@ -412,7 +412,6 @@ function mattata:on_message()
         if message.text then
             message = mattata.process_natural_language(self, message)
         end
-        message = mattata.process_stickers(message)
         -- A boolean value to decide later on, whether the message is intended for the current plugin from the iterated table.
         self.is_command = false
         -- This is the main loop which iterates over configured plugins and runs the appropriate functions.
