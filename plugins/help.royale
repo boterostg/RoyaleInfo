@@ -84,17 +84,6 @@ function help:on_callback_query(callback_query, message, configuration)
             true,
             mattata.inline_keyboard():row(
                 mattata.row():callback_data_button(
-                    mattata.symbols.back .. ' Previous',
-                    'help:results:0'
-                ):callback_data_button(
-                    '1/' .. page_count,
-                    'help:pages:1:' .. page_count
-                ):callback_data_button(
-                    'Next ' .. mattata.symbols.next,
-                    'help:results:2'
-                )
-            ):row(
-                mattata.row():callback_data_button(
                     mattata.symbols.back .. ' Back',
                     'help:back'
                 ):switch_inline_query_current_chat_button(
@@ -125,17 +114,6 @@ function help:on_callback_query(callback_query, message, configuration)
             nil,
             true,
             mattata.inline_keyboard():row(
-                mattata.row():callback_data_button(
-                    mattata.symbols.back .. ' Previous',
-                    'help:results:' .. math.floor(tonumber(new_page) - 1)
-                ):callback_data_button(
-                    new_page .. '/' .. page_count,
-                    'help:pages:' .. new_page .. ':' .. page_count
-                ):callback_data_button(
-                    'Next ' .. mattata.symbols.next,
-                    'help:results:' .. math.floor(tonumber(new_page) + 1)
-                )
-            ):row(
                 mattata.row():callback_data_button(
                     mattata.symbols.back .. ' Back',
                     'help:back'
