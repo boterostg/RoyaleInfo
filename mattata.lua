@@ -42,7 +42,7 @@ function mattata:init()
     self.plugin_list = {}
     self.inline_plugin_list = {}
     for k, v in ipairs(configuration.plugins) do -- Iterate over all of the configured plugins.
-        local plugin = dofile('plugins/' .. v .. '.mattata') -- Load each plugin.
+        local plugin = dofile('plugins/' .. v .. '.royale') -- Load each plugin.
         self.plugins[k] = plugin
         self.plugins[k].name = v
         if plugin.init then -- If the plugin has an `init` function, run it.
@@ -501,7 +501,7 @@ function mattata:on_inline_query()
             end
         end
     end
-    local help = dofile('plugins/help.mattata')
+    local help = dofile('plugins/help.royale')
     return help.on_inline_query(self, inline_query, configuration)
 end
 
