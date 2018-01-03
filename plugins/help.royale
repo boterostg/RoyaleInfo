@@ -21,9 +21,6 @@ function help.get_initial_keyboard(message)
             'Links',
             'help:links'
         ):callback_data_button(
-            'Admin Help',
-            'help:ahelp:1'
-        ):callback_data_button(
             'Commands',
             'help:cmds'
         )
@@ -31,12 +28,6 @@ function help.get_initial_keyboard(message)
         mattata.row():switch_inline_query_button(
             'Inline Mode',
             '/'
-        ):callback_data_button(
-            'Settings',
-            'help:settings:'..message.chat.id
-        ):callback_data_button(
-            'Channels',
-            'help:channels'
         )
     )
 end
@@ -160,88 +151,6 @@ function help:on_callback_query(callback_query, message, configuration)
             callback_query.id,
             string.format('You are on page %s of %s', current_page, total_pages)
         )
-    elseif callback_query.data == 'ahelp:1' then
-        local administration_help_text = [[
-I can perform many administrative actions in your groups, just add me as an administrator and send /administration to adjust the settings for your group.
-Here are some administrative commands and a brief comment regarding what they do:
-
-• /pin <text> - Send a Markdown-formatted message which can be edited by using the same command with different text, to save you from having to re-pin a message if you can't edit it (which happens if the message is older than 48 hours)
-
-• /ban - Ban a user by replying to one of their messages, or by specifying them by username/ID
-
-• /kick - Kick (ban and then unban) a user by replying to one of their messages, or by specifying them by username/ID
-
-• /unban - Unban a user by replying to one of their messages, or by specifying them by username/ID
-
-• /setrules <text> - Set the given Markdown-formatted text as the group rules, which will be sent whenever somebody uses /rules
-
-• /trust - Promotes an user to a trusted user of the current chat. This command can only be used by administrators of a supergroup. Admins can set their permissions to be immune to some filters.
-        ]]
-        return mattata.edit_message_text(
-            message.chat.id,
-            message.message_id,
-            administration_help_text,
-            'markdown',
-            true,
-            mattata.inline_keyboard():row(
-                mattata.row():callback_data_button(
-                    'Back',
-                    'help:back'
-                ):callback_data_button(
-                    'Next',
-                    'help:ahelp:2'
-                )
-            )
-        )
-    elseif callback_query.data == 'ahelp:2' then
-        local administration_help_text = [[
-• /setwelcome - Set the given Markdown-formatted text as a welcome message that will be sent every time a user joins your group (the welcome message can be disabled in the administration menu, accessible via /administration). You can use placeholders to automatically customise the welcome message for each user. Use $user\_id to insert the user's numerical ID, $chat\_id to insert the chat's numerical ID, $name to insert the user's name, $title to insert the chat title and $username to insert the user's username (if the user doesn't have an @username, their name will be used instead, so it is best to avoid using this with $name)
-
-• /warn - Warn a user, and ban them when they hit the maximum number of warnings
-
-• /mod - Promote the replied-to user, giving them access to administrative commands such as /ban, /kick, /warn etc. (this is useful when you don't want somebody to have the ability to delete messages!)
-
-• /demod - Demote the replied-to user, stripping them from their moderation status and revoking their ability to use administrative commands
-
-• /staff - View the group's creator, administrators, and moderators in a neatly-formatted list
-        ]]
-        return mattata.edit_message_text(
-            message.chat.id,
-            message.message_id,
-            administration_help_text,
-            'markdown',
-            true,
-            mattata.inline_keyboard():row(
-                mattata.row():callback_data_button(
-                    'Back',
-                    'help:ahelp:1'
-                ):callback_data_button(
-                    'Next',
-                    'help:ahelp:3'
-                )
-            )
-        )
-    elseif callback_query.data == 'ahelp:3' then
-        local administration_help_text = [[
-• /report - Forwards the replied-to message to all administrators and alerts them of the current situation
-
-• /setlink <URL> - Set the group's link to the given URL, which will be sent whenever somebody uses /link
-
-• /links <text> - Whitelists all of the Telegram links found in the given text (includes @username links)
-        ]]
-        return mattata.edit_message_text(
-            message.chat.id,
-            message.message_id,
-            administration_help_text,
-            'markdown',
-            true,
-            mattata.inline_keyboard():row(
-                mattata.row():callback_data_button(
-                    'Back',
-                    'help:ahelp:2'
-                )
-            )
-        )
     elseif callback_query.data == 'links' then
         return mattata.edit_message_text(
             message.chat.id,
@@ -289,44 +198,6 @@ Here are some administrative commands and a brief comment regarding what they do
                 )
             )
         )
-    elseif callback_query.data == 'channels' then
-        return mattata.edit_message_text(
-            message.chat.id,
-            message.message_id,
-            'Below are some links you might find useful:',
-            nil,
-            true,
-            mattata.inline_keyboard():row(
-                mattata.row():url_button(
-                    'Makeroid',
-                    'https://t.me/Makeroid'
-                )
-            ):row(
-                mattata.row():callback_data_button(
-                    mattata.symbols.back .. ' Back',
-                    'help:back'
-                )
-            )
-        )
-    elseif callback_query.data:match('^settings:%-*%d+$') then
-        if message.chat.type == 'supergroup' and not mattata.is_group_admin(message.chat.id, callback_query.from.id) then
-            return mattata.answer_callback_query(callback_query.id, language['errors']['admin'])
-        end
-        chat_id = callback_query.data:match('^settings:(%-*%d+)$')
-        return mattata.edit_message_reply_markup(
-            message.chat.id,
-            message.message_id,
-            nil,
-            mattata.inline_keyboard():row(
-                mattata.row():callback_data_button(
-                    'Plugins', 'plugins:' .. message.chat.id .. ':page:1'
-                )
-            ):row(
-                mattata.row():callback_data_button(
-                    'Back', 'help:back'
-                )
-            )
-        )
     elseif callback_query.data == 'back' then
         return mattata.edit_message_text(
             message.chat.id,
@@ -334,7 +205,6 @@ Here are some administrative commands and a brief comment regarding what they do
             string.format(
             [[
     <b>Hi %s! My name's %s, it's a pleasure to meet you</b> %s
-
     I will connect ClashRoyale with Telegram in an easy way saving time!
 
     I'm the best friend of @BarrePolice_Bot! He will help you to manage groups
