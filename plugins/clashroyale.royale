@@ -69,7 +69,7 @@ function clashroyale.parse_player(data)
         cards_pages = cards_pages + 1
     end
     local keyboard
-    if type(data.clan) == "table" then
+    if type(data.clan) ~= "userdata" then
         keyboard = mattata.inline_keyboard()
         :row(mattata.row():switch_inline_query_button('Share Player', '/cr player #' .. data.tag))
         :row(mattata.row():callback_data_button('Clan Information', 'clashroyale:player:' .. data.tag .. ':clan'))
@@ -133,7 +133,7 @@ function clashroyale.parse_player_clan(data)
     end
     output = output.. "Arena: <i>" .. data.arena.name .. "</i>, <code>" .. data.arena.arena .. "</code>\n\n\n"
     output = output.. "<b>Clan</b>\n"
-    if type(data.clan) == "table" then
+    if type(data.clan) ~= "userdata" then
         output = output.. "<a href=\"" .. data.clan.badge.image .. "\">" .. mattata.escape_html(data.clan.name) .. "</a> [#" .. data.clan.tag .. "]\n"
         output = output.. "Role: <i>" .. (data.clan.role):gsub("^%l", string.upper) .. "</i>\n\n"
         output = output.. "<b>Donations</b>\n"
