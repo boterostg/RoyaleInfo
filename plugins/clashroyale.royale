@@ -69,7 +69,7 @@ function clashroyale.parse_player(data)
         cards_pages = cards_pages + 1
     end
     local keyboard
-    if data.clan then
+    if type(data.clan) == "table" then
         keyboard = mattata.inline_keyboard()
         :row(mattata.row():switch_inline_query_button('Share Player', '/cr player #' .. data.tag))
         :row(mattata.row():callback_data_button('Clan Information', 'clashroyale:player:' .. data.tag .. ':clan'))
@@ -133,13 +133,17 @@ function clashroyale.parse_player_clan(data)
     end
     output = output.. "Arena: <i>" .. data.arena.name .. "</i>, <code>" .. data.arena.arena .. "</code>\n\n\n"
     output = output.. "<b>Clan</b>\n"
-    output = output.. "<a href=\"" .. data.clan.badge.image .. "\">" .. mattata.escape_html(data.clan.name) .. "</a> [#" .. data.clan.tag .. "]\n"
-    output = output.. "Role: <i>" .. (data.clan.role):gsub("^%l", string.upper) .. "</i>\n\n"
-    output = output.. "<b>Donations</b>\n"
-    output = output.. "Donations Given: <code>" .. math.floor(tonumber(data.clan.donations)) .. "</code>\n"
-    output = output.. "Donations Received: <code>" .. math.floor(tonumber(data.clan.donationsReceived)) .. "</code>\n\n"
-    output = output.. "To get <b>detailed Clan Information</b>, copy this command and <i>send it to me</i>:\n"
-    output = output.. "<code>/cr clan " .. data.clan.tag .. "</code>"
+    if type(data.clan) == "table" then
+        output = output.. "<a href=\"" .. data.clan.badge.image .. "\">" .. mattata.escape_html(data.clan.name) .. "</a> [#" .. data.clan.tag .. "]\n"
+        output = output.. "Role: <i>" .. (data.clan.role):gsub("^%l", string.upper) .. "</i>\n\n"
+        output = output.. "<b>Donations</b>\n"
+        output = output.. "Donations Given: <code>" .. math.floor(tonumber(data.clan.donations)) .. "</code>\n"
+        output = output.. "Donations Received: <code>" .. math.floor(tonumber(data.clan.donationsReceived)) .. "</code>\n\n"
+        output = output.. "To get <b>detailed Clan Information</b>, copy this command and <i>send it to me</i>:\n"
+        output = output.. "<code>/cr clan " .. data.clan.tag .. "</code>"
+    else
+        output = output.. mattata.escape_html(data.name) .. " doesn't below to any Clan"
+    end
 
     local keyboard = mattata.inline_keyboard()
     :row(mattata.row():callback_data_button('View Clan Info', 'clashroyale:clan:' .. data.clan.tag):switch_inline_query_button('Share Clan', '/cr clan #' .. data.clan.tag))
@@ -786,13 +790,11 @@ function clashroyale:on_message(message, configuration)
     elseif input:match('^save') then
         local tag = input:gsub("%s+", ""):gsub("save", ""):gsub("#", "")
         local json_data = clashroyale.request(configuration.keys.clashroyale, "player", tag)
-        if json_data and json_data.tag and json_data.clan then
+        if json_data and json_data.tag and type(json_data.clan) == "table" then
             redis:hset('clashroyale:' .. message.from.id, 'player', json_data.tag)
             return mattata.send_message(message, "Your player info has been saved as <i>" .. mattata.escape_html(json_data.name) .. "</i>", 'html', false, false, message.message_id)
-        elseif json_data and json_data.tag and not json_data.clan then
-            return mattata.send_message(message, "You gave me the ID of a clan!", 'html', false, false, message.message_id)
         else
-            return mattata.send_reply(message, "I couldn't find that player")
+            return mattata.send_reply(message, "Either you gave me the ID of a clan or the user doesn't exist")
         end
     elseif input:match('^version') then
         return mattata.send_reply(message, "Clash Royale API `" .. clashroyale.request(configuration.keys.clashroyale, "version") .. "`\n\n_For further support, contact_ [@Barreeeiroo](https://t.me/Barreeeiroo)", 'markdown')
