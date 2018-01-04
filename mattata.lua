@@ -454,7 +454,7 @@ function mattata:on_message()
     -- Anything miscellaneous is processed here, things which are perhaps plugin-specific
     -- and just not relevant to the core `mattata.on_message` function.
     mattata.process_plugin_extras(self)
-    player.redis:incr('clashroyale:messages:received')
+    redis:incr('clashroyale:messages:received')
     return true
 end
 
@@ -470,7 +470,7 @@ function mattata:process_plugin_extras()
 end
 
 function mattata:on_inline_query()
-    player.redis:incr('clashroyale:inlines:received')
+    redis:incr('clashroyale:inlines:received')
     local inline_query = self.inline_query
     if not inline_query.from then
         return false, 'No `inline_query.from` object was found!'
@@ -502,7 +502,7 @@ function mattata:on_inline_query()
 end
 
 function mattata:on_callback_query()
-    player.redis:incr('clashroyale:callbacks:received')
+    redis:incr('clashroyale:callbacks:received')
     local callback_query = self.callback_query
     local message = self.message
     if not callback_query.message or not callback_query.message.chat then
