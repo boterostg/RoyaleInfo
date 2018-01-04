@@ -68,14 +68,25 @@ function clashroyale.parse_player(data)
     if math.floor(tonumber(#data.cards) / 10) ~= tonumber(#data.cards) / 10 then
         cards_pages = cards_pages + 1
     end
-    local keyboard = mattata.inline_keyboard()
-    :row(mattata.row():switch_inline_query_button('Share Player', '/cr player #' .. data.tag))
-    :row((data.clan and mattata.row():callback_data_button('Clan Information', 'clashroyale:player:' .. data.tag .. ':clan')))
-    :row((data.leagueStatistics and mattata.row():callback_data_button('User Stats', 'clashroyale:player:' .. data.tag .. ':stats'):callback_data_button('Season Stats', 'clashroyale:player:' .. data.tag .. ':season') or mattata.row():callback_data_button('Player Statistics', 'clashroyale:player:' .. data.tag .. ':stats')))
-    :row(mattata.row():callback_data_button('View Current Deck', 'clashroyale:player:' .. data.tag .. ':deck'))
-    :row(mattata.row():callback_data_button('Upcoming Chest Cycle', 'clashroyale:player:' .. data.tag .. ':chests'))
-    :row(mattata.row():callback_data_button('Player\'s Cards Level', 'clashroyale:player:' .. data.tag .. ':cards:1:'..cards_pages))
-    :row(mattata.row():callback_data_button('Latest Battles History', 'clashroyale:player:' .. data.tag .. ':battles:0:1'))
+    local keyboard
+    if data.clan then
+        keyboard = mattata.inline_keyboard()
+        :row(mattata.row():switch_inline_query_button('Share Player', '/cr player #' .. data.tag))
+        :row(mattata.row():callback_data_button('Clan Information', 'clashroyale:player:' .. data.tag .. ':clan'))
+        :row((data.leagueStatistics and mattata.row():callback_data_button('User Stats', 'clashroyale:player:' .. data.tag .. ':stats'):callback_data_button('Season Stats', 'clashroyale:player:' .. data.tag .. ':season') or mattata.row():callback_data_button('Player Statistics', 'clashroyale:player:' .. data.tag .. ':stats')))
+        :row(mattata.row():callback_data_button('View Current Deck', 'clashroyale:player:' .. data.tag .. ':deck'))
+        :row(mattata.row():callback_data_button('Upcoming Chest Cycle', 'clashroyale:player:' .. data.tag .. ':chests'))
+        :row(mattata.row():callback_data_button('Player\'s Cards Level', 'clashroyale:player:' .. data.tag .. ':cards:1:'..cards_pages))
+        :row(mattata.row():callback_data_button('Latest Battles History', 'clashroyale:player:' .. data.tag .. ':battles:0:1'))
+    else
+        keyboard = mattata.inline_keyboard()
+        :row(mattata.row():switch_inline_query_button('Share Player', '/cr player #' .. data.tag))
+        :row((data.leagueStatistics and mattata.row():callback_data_button('User Stats', 'clashroyale:player:' .. data.tag .. ':stats'):callback_data_button('Season Stats', 'clashroyale:player:' .. data.tag .. ':season') or mattata.row():callback_data_button('Player Statistics', 'clashroyale:player:' .. data.tag .. ':stats')))
+        :row(mattata.row():callback_data_button('View Current Deck', 'clashroyale:player:' .. data.tag .. ':deck'))
+        :row(mattata.row():callback_data_button('Upcoming Chest Cycle', 'clashroyale:player:' .. data.tag .. ':chests'))
+        :row(mattata.row():callback_data_button('Player\'s Cards Level', 'clashroyale:player:' .. data.tag .. ':cards:1:'..cards_pages))
+        :row(mattata.row():callback_data_button('Latest Battles History', 'clashroyale:player:' .. data.tag .. ':battles:0:1'))
+    end
 
     return output, keyboard
 end
@@ -492,7 +503,7 @@ end
 
 
 
-function clashroyale:on_inline_query(inline_query, configuration, language)
+function clashroyale:on_inline_query(inline_query, configuration)
     local input = mattata.input(inline_query.query)
 
     if not input then
@@ -547,9 +558,9 @@ function clashroyale:on_inline_query(inline_query, configuration, language)
                     :id()
                     :type('article')
                     :title("Error")
-                    :description(language['errors']['results'])
+                    :description("I couldn't find any result")
                     :input_message_content(
-                        mattata.input_text_message_content(language['errors']['results'], 'html')
+                        mattata.input_text_message_content("I couldn't get any information about that player", 'html')
                     )
                 )
             end
@@ -606,17 +617,17 @@ function clashroyale:on_inline_query(inline_query, configuration, language)
                         :reply_markup(keyboard)
                     )
                 else
-                return mattata.answer_inline_query(
-                    inline_query.id,
-                    mattata.inline_result()
-                    :id()
-                    :type('article')
-                    :title("Error")
-                    :description(language['errors']['results'])
-                    :input_message_content(
-                        mattata.input_text_message_content(language['errors']['results'], 'html')
+                    return mattata.answer_inline_query(
+                        inline_query.id,
+                        mattata.inline_result()
+                        :id()
+                        :type('article')
+                        :title("Error")
+                        :description("I couldn't find any result")
+                        :input_message_content(
+                            mattata.input_text_message_content("I couldn't get any information about that player", 'html')
+                        )
                     )
-                )
                 end
             end
         end
@@ -730,7 +741,7 @@ function clashroyale:on_callback_query(callback_query, message, configuration)
 end
 
 
-function clashroyale:on_message(message, configuration, language)
+function clashroyale:on_message(message, configuration)
     local input = mattata.input(message.text)
     if not input then
         return mattata.send_reply(message, clashroyale.help)
@@ -747,7 +758,7 @@ function clashroyale:on_message(message, configuration, language)
                 local text, keyboard = clashroyale.parse_player(json_data)
                 return mattata.send_message(message, text, 'html', false, false, message.message_id, keyboard)
             else
-                return mattata.send_reply(message, language['errors']['results'])
+                return mattata.send_reply(message, "I couldn't find that player")
             end
         end
     elseif input:match('^clan') then
@@ -772,7 +783,7 @@ function clashroyale:on_message(message, configuration, language)
                     local text, keyboard = clashroyale.parse_clan_search(json_data, content, 1)
                     return mattata.send_message(message, text, 'html', false, false, message.message_id, keyboard)
                 else
-                    return mattata.send_reply(message, language['errors']['results'])
+                    return mattata.send_reply(message, "I couldn't find that player")
                 end
             end
         end
@@ -785,7 +796,7 @@ function clashroyale:on_message(message, configuration, language)
         elseif json_data and json_data.tag and not json_data.clan then
             return mattata.send_message(message, "You gave me the ID of a clan!", 'html', false, false, message.message_id)
         else
-            return mattata.send_reply(message, language['errors']['results'])
+            return mattata.send_reply(message, "I couldn't find that player")
         end
     elseif input:match('^version') then
         return mattata.send_reply(message, "Clash Royale API `" .. clashroyale.request(configuration.keys.clashroyale, "version") .. "`\n\n_For further support, contact_ [@Barreeeiroo](https://t.me/Barreeeiroo)", 'markdown')
