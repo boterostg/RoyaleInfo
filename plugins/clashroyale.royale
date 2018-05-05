@@ -36,16 +36,16 @@ end
 function clashroyale.request(key, input, content)
     local headers = {auth = key}
     if input == "player" then
-        response = requests.get{url = 'https://api.cr-api.com/player/'..content, headers = headers}
+        response = requests.get{url = 'https://api.royaleapi.com/player/'..content, headers = headers}
         return response.json()
     elseif input == "clan" then
-        response = requests.get{url = 'https://api.cr-api.com/clan/'..content, headers = headers}
+        response = requests.get{url = 'https://api.royaleapi.com/clan/'..content, headers = headers}
         return response.json()
     elseif input == "clan_search" then
-        response = requests.get{url = 'https://api.cr-api.com/clan/search?name='..content, headers = headers}
+        response = requests.get{url = 'https://api.royaleapi.com/clan/search?name='..content, headers = headers}
         return response.json()
     elseif input == "version" then
-        response = requests.get{url = 'https://api.cr-api.com/version', headers = headers}
+        response = requests.get{url = 'https://api.royaleapi.com/version', headers = headers}
         return response.text
     end
 end
